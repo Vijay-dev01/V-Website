@@ -1,9 +1,15 @@
 const Project = require("../models/projectModel");
 const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncError = require("../middleware/catchAsyncError");
+const APIFeatures = require("../utils/APIFeatures");
 
 exports.getProjects = async (req, res, next) => {
-  const projects = await Project.find();
+  let resPerPage = 2
+  const ApiFetures = new APIFeatures(Project.find(), req.query)
+    .search()
+    .filter()
+    .pagination(resPerPage);
+  const projects = await ApiFetures.query;
   res.status(200).json({
     success: true,
     count: projects.length,
@@ -12,6 +18,7 @@ exports.getProjects = async (req, res, next) => {
 };
 
 exports.newProject = catchAsyncError(async (req, res, next) => {
+  req.body.user = req.user.id;
   const project = await Project.create(req.body);
   res.status(201).json({
     success: true,
