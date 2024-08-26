@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createNewProject } from "../actions/ProjectAction";
 import { toast } from "react-toastify";
@@ -6,7 +6,7 @@ import { clearError, clearProjectCreated } from "../slices/ProjectSlice";
 import { useNavigate } from "react-router-dom";
 
 const AddProjectForm = () => {
-  const { loading, isProjectCreation, error } = useSelector(
+  const { isProjectCreation, error } = useSelector(
     (state) => state.projectState
   );
   const dispatch = useDispatch();
