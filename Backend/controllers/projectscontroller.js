@@ -4,15 +4,17 @@ const catchAsyncError = require("../middleware/catchAsyncError");
 const APIFeatures = require("../utils/APIFeatures");
 
 exports.getProjects = async (req, res, next) => {
-  let resPerPage = 2
+  let resPerPage = 3
   const ApiFetures = new APIFeatures(Project.find(), req.query)
     .search()
     .filter()
     .pagination(resPerPage);
   const projects = await ApiFetures.query;
+  const totalProjectsCount = await Project.countDocuments({});
   res.status(200).json({
     success: true,
-    count: projects.length,
+    count: totalProjectsCount,
+    resPerPage,
     projects,
   });
 };

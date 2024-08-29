@@ -13,6 +13,8 @@ const projectsSlice = createSlice({
     projectsSuccess(state, action) {
       state.loading = false;
       state.projects = action.payload.projects;
+      state.projectsCount = action.payload.count;
+      state.resPerPage = action.payload.resPerPage;
     },
     projectsFail(state, action) {
       state.loading = false;

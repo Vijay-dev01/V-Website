@@ -5,15 +5,21 @@ import { getProjects } from "../actions/ProjectAction";
 import Loader from "./Layouts/Loader";
 import { toast } from "react-toastify";
 import ProjectModal from "./ProjectDetail";
+import Pagination from "react-js-pagination";
 
 const Project = (props) => {
   const dispatch = useDispatch();
-  const { projects, loading, error } = useSelector(
+  const { projects, loading, error, projectsCount, resPerPage } = useSelector(
     (state) => state.projectsState
   );
 
   const [showModal, setShowModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const setCurrentPageNo = (pageNo) => {
+    setCurrentPage(pageNo);
+  };
 
   useEffect(() => {
     if (error) {
@@ -21,8 +27,8 @@ const Project = (props) => {
         position: toast.POSITION.BOTTOM_CENTER,
       });
     }
-    dispatch(getProjects());
-  }, [dispatch, error]);
+    dispatch(getProjects(null, null, null, null, currentPage));
+  }, [error, dispatch, currentPage]);
 
   const handleShowModal = (project) => {
     setSelectedProject(project);
@@ -97,6 +103,21 @@ const Project = (props) => {
                 </div>
               ))}
           </div>
+          {projectsCount > 0 && projectsCount > resPerPage ? (
+            <div className="d-flex justify-content-center mt-5">
+              <Pagination
+                activePage={currentPage}
+                onChange={setCurrentPageNo}
+                totalItemsCount={projectsCount}
+                itemsCountPerPage={resPerPage}
+                nextPageText={"Next"}
+                firstPageText={"First"}
+                lastPageText={"Last"}
+                itemClass={"page-item"}
+                linkClass={"page-link"}
+              />
+            </div>
+          ) : null}
         </div>
       )}
 
