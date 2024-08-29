@@ -50,12 +50,10 @@
   letter-spacing: 0.7px;
   padding-top: 0.6rem;
 }
-
 .home_1 p {
   padding: 1rem 2rem 1rem 0;
   font-size: 1.09rem;
 }
-
 .home_1 button {
   padding: 0.7rem 1.7rem;
   border-radius: 0;
@@ -65,32 +63,26 @@
   font-weight: 500;
   letter-spacing: 0.7px;
 }
-
 .home_1 button:hover {
   background: #01193c;
   color: #fff;
 }
-
 .home_2 img {
   background: #f8f9fa;
   padding: 3rem;
 }
-
 /* */
 .follow-main {
   background: #f8f9fa;
   padding: 3rem;
 }
-
 .follow-main h3 {
   font-weight: 400;
 }
-
 .follow-main p {
   padding: 0.5rem;
 }
-
-/**/
+/**/ 
 .Footer {
   padding: 2rem 0;
 }
@@ -178,21 +170,19 @@
   background: var(--gradient) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  border-image-source: var(--gradient) !important;
+  border-image-source:  var(--gradient) !important; 
   text-decoration: none;
   transition: all .4s ease;
 }
 
-.btn:hover,
-.btn:focus {
-  background: var(--gradient) !important;
+.btn:hover, .btn:focus {
+      background: var(--gradient) !important;
   -webkit-background-clip: none !important;
   -webkit-text-fill-color: #fff !important;
-  border: 5px solid #fff !important;
+  border: 5px solid #fff !important; 
   box-shadow: #222 1px 0 10px;
   text-decoration: underline;
 }
-
 .dark-card {
   background: #222;
   border: 2px solid #dd2476;
@@ -228,8 +218,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: -1;
-  /* Ensure it's behind other content */
+  z-index: -1; /* Ensure it's behind other content */
   /* Add more styling as needed */
 }
 
@@ -243,7 +232,6 @@
   height: 80px;
   padding-left: 0;
 }
-
 .loader:after {
   content: ' ';
   display: block;
@@ -255,12 +243,10 @@
   border-color: #fa9c23 transparent;
   animation: lds-dual-ring 1.2s linear infinite;
 }
-
 @keyframes lds-dual-ring {
   0% {
     transform: rotate(0deg);
   }
-
   100% {
     transform: rotate(360deg);
   }
