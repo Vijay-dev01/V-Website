@@ -16,6 +16,9 @@ import Skills from './Components/Skills';
 import Certificates from './Components/Certificates';
 import ParticlesBg from './particlesJS/ParticlesBg';
 import AddProjectForm from './Components/AddProject';
+import { HelmetProvider } from 'react-helmet-async';
+import Login from './Components/User/Login';
+import Register from './Components/User/Register';
 
 
 function App() {
@@ -38,17 +41,21 @@ function App() {
         <ParticlesBg />
         <Navbar mode={mode} tooglemode={tooglemode} />
         <ToastContainer theme='dark'/>
+        <HelmetProvider>
         <Routes>
           <Route path='/' element={<Home mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/about' element={<About />}></Route>
           <Route path='/contact' element={<Contact mode={mode} tooglemode={tooglemode}/>}></Route>
           <Route path='/project' element={<Project mode={mode} tooglemode={tooglemode} />}></Route>
-          {/* <Route path='/login' element={<Login />}></Route>
-          <Route path='/signup' element={<SignUp />}></Route> */}
+          {/* <Route path='/login' element={<Login />}></Route> */}
+          {/* <Route path='/signup' element={<SignUp />}></Route> */}
+          <Route path='/login' element={<Login mode={mode} tooglemode={tooglemode} />}></Route>
+          <Route path='/register' element={<Register mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/skills' element={<Skills mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/certificates' element={<Certificates mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/project/addproject' element={<AddProjectForm mode={mode} tooglemode={tooglemode} />}></Route>
         </Routes> 
+        </HelmetProvider>
         <Footer mode={mode} tooglemode={tooglemode} />
         </div>
       </BrowserRouter>

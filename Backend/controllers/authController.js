@@ -21,16 +21,18 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return new ErrorHandler("Please enter email and password", 400);
+    return next(new ErrorHandler("Please enter email & password", 400));
   }
 
+  //finding the user database
   const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
-    return next(new ErrorHandler("Please enter valid email or password", 401));
+    return next(new ErrorHandler("Invalid email or password", 401));
   }
+
   if (!(await user.isValidPassword(password))) {
-    return next(new ErrorHandler("Please enter valid email or password", 401));
+    return next(new ErrorHandler("Invalid email or password", 401));
   }
 
   sendToken(user, 201, res);
@@ -205,7 +207,9 @@ exports.deleteUser = catchAsyncError(async (req, res, next) => {
   const user = await User.findByIdAndDelete(req.params.id);
 
   if (!user) {
-    return next(new ErrorHandler(`User not found with this ${req.params.id}`, 404));
+    return next(
+      new ErrorHandler(`User not found with this ${req.params.id}`, 404)
+    );
   }
 
   res.status(200).json({
