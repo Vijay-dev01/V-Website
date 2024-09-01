@@ -7,7 +7,7 @@ import Navbar from './Components/Layouts/Navbar';
 import Footer from './Components/Layouts/Footer';
 import About from './Components/About';
 import Contact from './Components/Contact';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Home from './Components/Home';
 import Project from './Components/Project';
 // import Login from './Components/Authentication/Login';
@@ -19,10 +19,16 @@ import AddProjectForm from './Components/AddProject';
 import { HelmetProvider } from 'react-helmet-async';
 import Login from './Components/User/Login';
 import Register from './Components/User/Register';
+import store from "./store"
+import { loadUser } from './actions/UserAction';
+import axios from 'axios';
+import Profile from './Components/User/Profile';
+import ProtectedRoute from './Components/route/ProtectedRoute';
 
 
 function App() {
   const [mode, setMode] = useState('light');
+  // const [stripeApiKey, setStripeApiKey] = useState("")
 
   const tooglemode = () => {
     if (mode === 'light') {
@@ -34,6 +40,15 @@ function App() {
       document.body.style.background = "white"
     }
   }
+
+  useEffect(() => {
+    store.dispatch(loadUser)
+    // async function getStripeApiKey(){
+    //   const {data} = await axios.get('/api/v1/stripeapi')
+    //   setStripeApiKey(data.stripeApiKey)
+    // }
+    // getStripeApiKey()
+  })
   return (
     <>
       <BrowserRouter>
@@ -51,6 +66,7 @@ function App() {
           {/* <Route path='/signup' element={<SignUp />}></Route> */}
           <Route path='/login' element={<Login mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/register' element={<Register mode={mode} tooglemode={tooglemode} />}></Route>
+          <Route path='/myprofile' element={<ProtectedRoute> <Profile mode={mode} tooglemode={tooglemode} /></ProtectedRoute>}></Route>
           <Route path='/skills' element={<Skills mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/certificates' element={<Certificates mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/project/addproject' element={<AddProjectForm mode={mode} tooglemode={tooglemode} />}></Route>
