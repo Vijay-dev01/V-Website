@@ -24,6 +24,10 @@ import { loadUser } from './actions/UserAction';
 import axios from 'axios';
 import Profile from './Components/User/Profile';
 import ProtectedRoute from './Components/route/ProtectedRoute';
+import UpdateProfile from './Components/User/UpdateProfile';
+import UpdatePassword from './Components/User/UpdatePassword';
+import ForgotPassword from './Components/User/ForgotPassword';
+import ResetPassword from './Components/User/ResetPassword';
 
 
 function App() {
@@ -67,6 +71,10 @@ function App() {
           <Route path='/login' element={<Login mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/register' element={<Register mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/myprofile' element={<ProtectedRoute> <Profile mode={mode} tooglemode={tooglemode} /></ProtectedRoute>}></Route>
+          <Route path='/myprofile/update' element={<ProtectedRoute> <UpdateProfile mode={mode} tooglemode={tooglemode} /></ProtectedRoute>}></Route>
+          <Route path='/myprofile/update/password' element={<ProtectedRoute> <UpdatePassword mode={mode} tooglemode={tooglemode} /></ProtectedRoute>}></Route>
+          <Route path='/password/forgot' element={ <ForgotPassword mode={mode} tooglemode={tooglemode} />}></Route>
+          <Route path='/password/reset/:token' element={ <ResetPassword mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/skills' element={<Skills mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/certificates' element={<Certificates mode={mode} tooglemode={tooglemode} />}></Route>
           <Route path='/project/addproject' element={<AddProjectForm mode={mode} tooglemode={tooglemode} />}></Route>

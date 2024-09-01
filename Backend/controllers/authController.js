@@ -73,11 +73,15 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
   const resetToken = user.getResetToken();
   await user.save({ validateBeforeSave: false });
 
-  const resetUrl = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/password/reset/${resetToken}`;
+  let BASE_URL = process.env.FRONTEND_URL;
+  // if (process.env.NODE_ENV === "production") {
+  //   BASE_URL = `${req.protocol}://${req.get("host")}`;
+  // }
 
-  const message = `Your Password reset url is as follows \n\n
+  //Create reset url
+  const resetUrl = `${BASE_URL}/password/reset/${resetToken}`;
+
+  const message = `Your password reset url is as follows \n\n 
   ${resetUrl} \n\n If you have not requested this email, then ignore it.`;
 
   try {
@@ -89,7 +93,7 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: `Email send to ${user.email}`,
+      message: `Email sent to ${user.email}`,
     });
   } catch (error) {
     user.resetPasswordToken = undefined;
@@ -153,10 +157,21 @@ exports.changePassword = catchAsyncError(async (req, res, next) => {
 });
 
 exports.updateProfile = catchAsyncError(async (req, res, next) => {
-  const newUserData = {
+  let newUserData = {
     name: req.body.name,
     email: req.body.email,
   };
+
+  let avatar;
+  let BASE_URL = process.env.BACKEND_URL;
+  if (process.env.NODE_ENV === "production") {
+    BASE_URL = `${req.protocol}://${req.get("host")}`;
+  }
+
+  if (req.file) {
+    avatar = `${BASE_URL}/uploads/user/${req.file.originalname}`;
+    newUserData = { ...newUserData, avatar };
+  }
 
   const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
     new: true,
