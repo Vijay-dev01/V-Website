@@ -5,7 +5,7 @@ const projectSlice = createSlice({
   initialState: {
     loading: false,
     project: {},
-    isProjectCreation: false,
+    isProjectCreated: false,
   },
   reducers: {
     projectRequest(state, action) {

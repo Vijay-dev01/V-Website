@@ -65,7 +65,7 @@ export const getProjects = (
 //   }
 // };
 
-export const createNewProject = (projectData) => async (dispatch) => {
+export const createNewProject = projectData => async (dispatch) => {
   try {
     dispatch(newProjectRequest());
     const { data } = await axios.post(`/api/v1/admin/project/new`, projectData);

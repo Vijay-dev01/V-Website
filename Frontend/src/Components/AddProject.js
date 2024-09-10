@@ -1,231 +1,201 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createNewProject } from "../actions/ProjectAction";
 import { toast } from "react-toastify";
 import { clearError, clearProjectCreated } from "../slices/ProjectSlice";
 import { useNavigate } from "react-router-dom";
 
-const AddProjectForm = () => {
-  const { loading, isProjectCreation, error } = useSelector(
+export default function NewProduct() {
+  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [siteLink, setSiteLink] = useState("");
+  const [githubLink, setGithubLink] = useState("");
+  const [skills, setSkills] = useState([]);
+  const [images, setImages] = useState([]);
+  const [imagesPreview, setImagesPreview] = useState([]);
+
+  const { loading, isProjectCreated, error } = useSelector(
     (state) => state.projectState
   );
-  const dispatch = useDispatch();
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    title: "",
-    description: "",
-    siteLink: "",
-    githubLink: "",
-    skills: [{ skill: "" }],
-    images: [{ image: "" }],
-  });
+  const onImagesChange = (e) => {
+    const files = Array.from(e.target.files);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    files.forEach((file) => {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        if (reader.readyState === 2) {
+          setImagesPreview((oldArray) => [...oldArray, reader.result]);
+          setImages((oldArray) => [...oldArray, file]);
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
   };
 
-  const handleSkillChange = (index, e) => {
-    const { value } = e.target;
-    const newSkills = [...formData.skills];
-    newSkills[index].skill = value;
-    setFormData({ ...formData, skills: newSkills });
-  };
-
-  const handleImageChange = (index, e) => {
-    const { value } = e.target;
-    const newImages = [...formData.images];
-    newImages[index].image = value;
-    setFormData({ ...formData, images: newImages });
-  };
-
-  const addSkill = () => {
-    setFormData({ ...formData, skills: [...formData.skills, { skill: "" }] });
-  };
-
-  const addImage = () => {
-    setFormData({ ...formData, images: [...formData.images, { image: "" }] });
-  };
-
-  const handleSubmit = (e) => {
+  const submitHandler = (e) => {
     e.preventDefault();
-    console.log("Form data submitted:", formData);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("siteLink", siteLink);
+    formData.append("githubLink", githubLink);
+
+    // Convert skills array to the correct structure
+    const formattedSkills = skills.map((skill) => ({ skill }));
+    formData.append("skills", JSON.stringify(formattedSkills));
+
+    images.forEach((image) => {
+      formData.append("images", image);
+    });
     dispatch(createNewProject(formData));
   };
 
   useEffect(() => {
-    if (isProjectCreation) {
-      toast("Product Created Succesfully!", {
-        type: "success",
+    if (isProjectCreated) {
+      toast.success("Project Created Successfully!", {
         position: toast.POSITION.BOTTOM_CENTER,
-        onOpen: () => dispatch(clearProjectCreated()),
       });
+      // Clear the project creation state after showing toast
+      dispatch(clearProjectCreated());
+      // Navigate after project creation
       navigate("/project");
-      return;
     }
 
     if (error) {
-      toast(error, {
+      toast.error(error, {
         position: toast.POSITION.BOTTOM_CENTER,
-        type: "error",
-        onOpen: () => {
-          dispatch(clearError());
-        },
       });
-      return;
+      // Clear the error state after showing toast
+      dispatch(clearError());
     }
-  }, [isProjectCreation, error, dispatch, navigate]);
+  }, [isProjectCreated, error, dispatch, navigate]);
+
   return (
-    <div className="form-container">
-      <form onSubmit={handleSubmit} className="form-content">
-        <div className="mb-3">
-          <label htmlFor="name" className="form-label">
-            Name
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="title" className="form-label">
-            Title
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="description" className="form-label">
-            Description
-          </label>
-          <textarea
-            className="form-control"
-            id="description"
-            name="description"
-            rows="3"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          ></textarea>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="siteLink" className="form-label">
-            Site Link
-          </label>
-          <input
-            type="url"
-            className="form-control"
-            id="siteLink"
-            name="siteLink"
-            value={formData.siteLink}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="githubLink" className="form-label">
-            GitHub Link
-          </label>
-          <input
-            type="url"
-            className="form-control"
-            id="githubLink"
-            name="githubLink"
-            value={formData.githubLink}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Skills</label>
-          {formData.skills.map((skill, index) => (
-            <div key={index} className="input-group mb-2">
-              <input
-                type="text"
-                className="form-control"
-                value={skill.skill}
-                onChange={(e) => handleSkillChange(index, e)}
-                required
-              />
-            </div>
-          ))}
-          <button
-            type="button"
-            className="btn btn-secondary btn-sm"
-            onClick={addSkill}
-          >
-            Add Skill
-          </button>
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Images</label>
-          {formData.images.map((image, index) => (
-            <div key={index} className="input-group mb-2">
-              <input
-                type="url"
-                className="form-control"
-                value={image.image}
-                onChange={(e) => handleImageChange(index, e)}
-                required
-              />
-            </div>
-          ))}
-          <button
-            type="button"
-            className="btn btn-secondary btn-sm"
-            onClick={addImage}
-          >
-            Add Image
-          </button>
-        </div>
-        {/* <div className="form-group">
-          <label>Images</label>
+    <div className="row">
+      <div className="col-12 col-md-10">
+        <Fragment>
+          <div className="wrapper my-5">
+            <form
+              onSubmit={submitHandler}
+              className="shadow-lg"
+              encType="multipart/form-data"
+            >
+              <h1 className="mb-4">New Product</h1>
 
-          <div className="custom-file">
-            <input
-              type="file"
-              name="product_images"
-              className="custom-file-input"
-              id="customFile"
-              multiple
-              onChange={onImagesChange}
-            />
+              <div className="form-group">
+                <label htmlFor="name_field">Name</label>
+                <input
+                  type="text"
+                  id="name_field"
+                  className="form-control"
+                  onChange={(e) => setName(e.target.value)}
+                  value={name}
+                />
+              </div>
 
-            <label className="custom-file-label" htmlFor="customFile">
-              Choose Images
-            </label>
+              <div className="form-group">
+                <label htmlFor="description_field">Description</label>
+                <textarea
+                  className="form-control"
+                  id="description_field"
+                  rows="8"
+                  onChange={(e) => setDescription(e.target.value)}
+                  value={description}
+                ></textarea>
+              </div>
+              <div className="form-group">
+                <label htmlFor="title_field">Title</label>
+                <input
+                  type="text"
+                  id="title_field"
+                  className="form-control"
+                  onChange={(e) => setTitle(e.target.value)}
+                  value={title}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="siteLink_field">Site Link</label>
+                <input
+                  type="text"
+                  id="siteLink_field"
+                  className="form-control"
+                  onChange={(e) => setSiteLink(e.target.value)}
+                  value={siteLink}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="githubLink_field">Github Link</label>
+                <input
+                  type="text"
+                  id="githubLink_field"
+                  className="form-control"
+                  onChange={(e) => setGithubLink(e.target.value)}
+                  value={githubLink}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="skills_field">Skills</label>
+                <input
+                  type="text"
+                  id="skills_field"
+                  className="form-control"
+                  onChange={(e) => setSkills(e.target.value.split(","))} // Parse CSV input to array
+                  value={skills}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Images</label>
+
+                <div className="custom-file">
+                  <input
+                    type="file"
+                    name="product_images"
+                    className="custom-file-input"
+                    id="customFile"
+                    multiple
+                    onChange={onImagesChange}
+                  />
+
+                  <label className="custom-file-label" htmlFor="customFile">
+                    Choose Images
+                  </label>
+                </div>
+                {imagesPreview.map((image) => (
+                  <img
+                    className="mt-3 mr-2"
+                    key={image}
+                    src={image}
+                    alt={`Image Preview`}
+                    width="55"
+                    height="52"
+                  />
+                ))}
+              </div>
+
+              <button
+                id="login_button"
+                type="submit"
+                disabled={loading}
+                className="btn btn-block py-3"
+              >
+                CREATE
+              </button>
+            </form>
           </div>
-          {imagesPreview.map((image) => (
-            <img
-              className="mt-3 mr-2"
-              key={image}
-              src={image}
-              alt={`Image Preview`}
-              width="55"
-              height="52"
-            />
-          ))}
-        </div> */}
-        <button type="submit" className="btn btn-primary btn-sm">
-          Submit
-        </button>
-      </form>
+        </Fragment>
+      </div>
     </div>
   );
-};
-
-export default AddProjectForm;
+}
